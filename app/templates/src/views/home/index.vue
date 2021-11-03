@@ -16,15 +16,12 @@ export default {
   data() {
     return {
       list: [
-        'Vue-cli4',
         '配置多环境变量',
         'VantUI 组件按需加载',
         'Less 全局样式',
-        'Webpack 4',
         'Vuex 状态管理',
         'Axios',
         'Vue-router',
-        '配置 proxy 跨域',
         '配置 alias 别名',
         '配置 打包分析',
         'splitChunks 单独打包第三方模块',

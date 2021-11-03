@@ -4,7 +4,7 @@
 
 ### Node 版本要求
 
-`Vue CLI` 需要 Node.js 8.9 或更高版本 (推荐 8.11.0+)。你可以使用 [nvm](https://github.com/nvm-sh/nvm) 
+`Vue CLI` 需要 Node.js 8.9 或更高版本。你可以使用 [nvm](https://github.com/nvm-sh/nvm) 
 
 本示例 Node.js 12.14.1
 
@@ -12,9 +12,10 @@
 
 ```bash
 
-npm install
+yo zofund-vue
 
 npm run serve
+
 ```
 
 <span id="top">目录</span>
@@ -22,14 +23,12 @@ npm run serve
 - √ Vue-cli4
 - [√ 配置多环境变量](#env)
 - [√ rem 适配方案](#rem)
-- [√ vm 适配方案](#vm)
 - [√ VantUI 组件按需加载](#vant)
 - [√ Vuex 状态管理](#vuex)
 - [√ Vue-router](#router)
 - [√ Axios 封装及接口管理](#axios)
 - [√ Webpack 4 vue.config.js 基础配置](#base)
 - [√ 配置 alias 别名](#alias)
-- [√ 配置 proxy 跨域](#proxy)
 - [√ 配置 打包分析](#bundle)
 - [√ 去掉 console.log ](#console)
 - [√ splitChunks 单独打包第三方模块](#chunks)
@@ -154,8 +153,7 @@ module.exports = {
 
 **新手必看，老鸟跳过**
 
-很多小伙伴会问我，适配的问题,因为我们使用的是 Vant UI，所以必须根据 Vant UI 375 的设计规范走，一般我们的设计会将 UI 图上
-传到蓝湖，我们就可以需要的尺寸了。下面就大搞普及一下 rem。
+因为我们使用的是 Vant UI，所以必须根据 Vant UI 375 的设计规范走，一般我们的设计会将 UI 图上传到蓝湖，我们就可以需要的尺寸了。
 
 我们知道 `1rem` 等于`html` 根元素设定的 `font-size` 的 `px` 值。Vant UI 设置 `rootValue: 37.5`,你可以看到在 iPhone 6 下
 看到 （`1rem 等于 37.5px`）：
@@ -194,62 +192,6 @@ module.exports = {
   }
 </style>
 ```
-
-[▲ 回顶部](#top)
-
-### <span id="vw">✅ vm 适配方案 </span>
-
-本项目使用的是 rem 的 适配方案，其实无论你使用哪种方案，都不需要你去计算 12px 是多少 rem 或者 vw, 会有专门的工具去帮你做
-。如果你想用 vw，你可以按照下面的方式切换。
-
-#### 1.安装依赖
-
-```bash
-
-npm install postcss-px-to-viewport -D
-
-```
-
-#### 2.修改 .postcssrc.js
-
-将根目录下 .postcssrc.js 文件修改如下
-
-```javascript
-// https://github.com/michael-ciniawsky/postcss-load-config
-module.exports = {
-  plugins: {
-    autoprefixer: {
-      overrideBrowserslist: ['Android 4.1', 'iOS 7.1', 'Chrome > 31', 'ff > 31', 'ie >= 8']
-    },
-    'postcss-px-to-viewport': {
-      viewportWidth: 375, // 视窗的宽度，对应的是我们设计稿的宽度，一般是750
-      unitPrecision: 3, // 指定`px`转换为视窗单位值的小数位数（很多时候无法整除）
-      viewportUnit: 'vw', // 指定需要转换成的视窗单位，建议使用vw
-      selectorBlackList: ['.ignore', '.hairlines'], // 指定不转换为视窗单位的类，可以自定义，可以无限添加,建议定义一至两个通用的类名
-      minPixelValue: 1, // 小于或等于`1px`不转换为视窗单位，你也可以设置为你想要的值
-      mediaQuery: false // 允许在媒体查询中转换`px`
-    }
-  }
-}
-```
-
-#### 3.删除原来的 rem 相关代码
-
-src/main.js 删除如下代码
-
-```javascript
-// 移动端适配
-import 'lib-flexible/flexible.js'
-```
-
-package.json 删除如下代码
-
-```javascript
-"lib-flexible": "^0.3.2",
-"postcss-pxtorem": "^5.1.1",
-```
-
-运行起来，F12 元素 css 就是 vw 单位了
 
 [▲ 回顶部](#top)
 
@@ -346,38 +288,9 @@ Vue.use(Tabbar).use(TabbarItem)
 }
 ```
 
-#### 父组件改变子组件样式 深度选择器
-
-当你子组件使用了 `scoped` 但在父组件又想修改子组件的样式可以 通过 `>>>` 来实现：
-
-```css
-<style scoped>
-.a >>> .b { /* ... */ }
-</style>
-```
-
 #### 全局变量
 
-`vue.config.js` 配置使用 `css.loaderOptions` 选项,注入 `less` 的 `mixin` `variables` 到全局，不需要手动引入
-
-```javascript
-const IS_PROD = ['production', 'prod'].includes(process.env.NODE_ENV)
-const defaultSettings = require('./src/config/index.js')
-module.exports = {
-  css: {
-    extract: IS_PROD,
-    sourceMap: false,
-    loaderOptions: {
-      // 给 less-loader 传递选项
-      less: {
-        globalVars: {
-          primary: '#fff'
-        }
-      }
-    }
-  }
-}
-```
+`vue.config.js` 配置使用 `pluginOptions` 选项,注入 `less` 的 `mixin` `variables` 到全局，不需要手动引入
 
 [▲ 回顶部](#top)
 
@@ -420,7 +333,7 @@ new Vue({
     methods: {
       // Action 通过 store.dispatch 方法触发
       doDispatch() {
-        this.$store.dispatch('setUserName', '真乖，赶紧关注公众号，组织都在等你~')
+        this.$store.dispatch('setUserName', 'hello world')
       }
     }
   }
@@ -473,7 +386,6 @@ export default createRouter()
 `utils/request.js` 封装 axios ,开发者需要根据后台接口做修改。
 
 - `service.interceptors.request.use` 里可以设置请求头，比如设置 `token`
-- `config.hideloading` 是在 api 文件夹下的接口参数里设置，下文会讲
 - `service.interceptors.response.use` 里可以对接口返回数据处理，比如 401 删除本地信息，重新登录
 
 ```javascript
@@ -489,18 +401,11 @@ const service = axios.create({
   timeout: 5000 // request timeout
 })
 
-// request 拦截器 request interceptor
+// request拦截器 request interceptor
 service.interceptors.request.use(
   config => {
-    // 不传递默认开启loading
-    if (!config.hideloading) {
-      // loading
-      Toast.loading({
-        forbidClick: true
-      })
-    }
     if (store.getters.token) {
-      config.headers['X-Token'] = ''
+      // config.headers['X-Token'] = ''
     }
     return config
   },
@@ -513,13 +418,12 @@ service.interceptors.request.use(
 // respone拦截器
 service.interceptors.response.use(
   response => {
-    Toast.clear()
     const res = response.data
     if (res.status && res.status !== 200) {
       // 登录超时,重新登录
       if (res.status === 401) {
         store.dispatch('FedLogOut').then(() => {
-          location.reload()
+          // location.reload()
         })
       }
       return Promise.reject(res || 'error')
@@ -528,11 +432,11 @@ service.interceptors.response.use(
     }
   },
   error => {
-    Toast.clear()
     console.log('err' + error) // for debug
     return Promise.reject(error)
   }
 )
+
 export default service
 ```
 
@@ -540,11 +444,10 @@ export default service
 
 在`src/api` 文件夹下统一管理接口
 
-- 你可以建立多个模块对接接口, 比如 `home.js` 里是首页的接口这里讲解 `user.js`
+- 你可以建立多个模块对接接口, 比如 `user.js`
 - `url` 接口地址，请求的时候会拼接上 `config` 下的 `baseApi`
 - `method` 请求方法
 - `data` 请求参数 `qs.stringify(params)` 是对数据系列化操作
-- `hideloading` 默认 `false`,设置为 `true` 后，不显示 loading ui 交互中有些接口不需要让用户感知
 
 ```javascript
 import qs from 'qs'
@@ -557,8 +460,7 @@ export function getUserInfo(params) {
   return request({
     url: '/user/userinfo',
     method: 'post',
-    data: qs.stringify(params),
-    hideloading: true // 隐藏 loading 组件
+    data: qs.stringify(params)
   })
 }
 ```
@@ -602,7 +504,7 @@ module.exports = {
   lintOnSave: !IS_PROD,
   productionSourceMap: false, // 如果你不需要生产环境的 source map，可以将其设置为 false 以加速生产环境构建。
   devServer: {
-    port: 9020, // 端口号
+    port: 8080, // 端口号
     open: false, // 启动后打开浏览器
     overlay: {
       //  当出现编译器错误或警告时，在浏览器中显示全屏覆盖层
@@ -633,45 +535,6 @@ module.exports = {
       .set('views', resolve('src/views'))
       .set('components', resolve('src/components'))
   }
-}
-```
-
-[▲ 回顶部](#top)
-
-### <span id="proxy">✅ 配置 proxy 跨域 </span>
-
-如果你的项目需要跨域设置，你需要打来 `vue.config.js` `proxy` 注释 并且配置相应参数
-
-<u>**!!!注意：你还需要将 `src/config/env.development.js` 里的 `baseApi` 设置成 '/'**</u>
-
-```javascript
-module.exports = {
-  devServer: {
-    // ....
-    proxy: {
-      //配置跨域
-      '/api': {
-        target: 'https://test.xxx.com', // 接口的域名
-        // ws: true, // 是否启用websockets
-        changOrigin: true, // 开启代理，在本地创建一个虚拟服务端
-        pathRewrite: {
-          '^/api': '/'
-        }
-      }
-    }
-  }
-}
-```
-
-使用 例如: `src/api/home.js`
-
-```javascript
-export function getUserInfo(params) {
-  return request({
-    url: '/api/userinfo',
-    method: 'post',
-    data: qs.stringify(params)
-  })
 }
 ```
 
