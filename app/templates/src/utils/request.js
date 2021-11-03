@@ -1,6 +1,5 @@
 import axios from 'axios'
 import store from '@/store'
-import { Toast } from 'vant'
 // 根据环境不同引入不同api地址
 import { baseApi } from '@/config'
 // create an axios instance
