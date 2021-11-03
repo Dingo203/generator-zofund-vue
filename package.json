@@ -1,0 +1,24 @@
+{
+  "name": "generator-zofund-vue",
+  "version": "1.0.0",
+  "description": "For vue project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Dingo203/generator-zofund-vue.git"
+  },
+  "author": "Dingo <477623503@qq.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Dingo203/generator-zofund-vue/issues"
+  },
+  "homepage": "https://github.com/Dingo203/generator-zofund-vue#readme",
+  "dependencies": {
+    "yeoman-generator": "^5.4.2",
+    "yosay": "^2.0.2",
+    "chalk": "^4.1.2"
+  }
+}
